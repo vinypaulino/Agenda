@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,13 +23,19 @@ import br.com.vinipaulino.mobile.agenda.DAO.AlunoDAO;
 import br.com.vinipaulino.mobile.agenda.R;
 import br.com.vinipaulino.mobile.agenda.adapter.AlunosAdapter;
 import br.com.vinipaulino.mobile.agenda.modelo.Aluno;
+import br.com.vinipaulino.mobile.agenda.retrofit.RetrofitInicializador;
 import br.com.vinipaulino.mobile.agenda.task.EnviarAlunosTask;
+import br.com.vinipaulino.mobile.agenda.tdo.AlunoSync;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ListaAlunosActivity extends AppCompatActivity {
 
     private static final int CODIGO_SMS = 1;
     private ListView listaAlunos;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +87,6 @@ public class ListaAlunosActivity extends AppCompatActivity {
                 Intent vaiParaProvas = new Intent(ListaAlunosActivity.this, ProvasActivity.class);
                 startActivity(vaiParaProvas);
                 break;
-
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -89,6 +95,19 @@ public class ListaAlunosActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Call<AlunoSync> call = new RetrofitInicializador().getAlunoService().lista();
+        call.enqueue(new Callback<AlunoSync>() {
+            @Override
+            public void onResponse(Call<AlunoSync> call, Response<AlunoSync> response) {
+                AlunoSync alunoSync = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<AlunoSync> call, Throwable t) {
+
+            }
+        });
+
         carregaLista();
     }
 

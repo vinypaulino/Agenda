@@ -1,11 +1,14 @@
 package br.com.vinipaulino.mobile.agenda.modelo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 
 /**
  * Created by vinyp on 14/02/2018.
  */
-
+//Anotação adicionada para ignorar os campos que vierem a mais do servidor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Aluno implements Serializable{
     private String id;
     private String nome;
